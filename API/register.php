@@ -5,7 +5,7 @@
 if(!defined("UBSecurity")) exit("Access denied.");
 
 $retjson = 
-[	"result"	=>	"error",
+[	"result"	=>	"failed",
 	"reason"	=>	""];
 $isFailed = false;
 
