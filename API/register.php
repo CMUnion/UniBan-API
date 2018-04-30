@@ -1,5 +1,6 @@
 <?php
 // UniBan 服务器注册API
+// ✝️ God bless us.
 // Copyright (C) EucalyptusLeaves 2018
 if(!defined("UBSecurity")) exit("Access denied.");
 
