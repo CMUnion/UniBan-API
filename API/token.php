@@ -10,7 +10,7 @@ $retjson =
 	"token"	=>	""];
 $isFailed = false;
 
-if ($_REQUEST["key"]=="") {
+if ($_POST["key"]=="") {
 	$retjson["result"] = "failed";
 	$retjson["reason"] = "Incompleted argument:key";
 	$isFailed=true;
@@ -21,7 +21,7 @@ checkInput(); //注入检测
 if($isFailed) exit(json_encode($retjson));
 
 $userIP = $_SERVER['REMOTE_ADDR'];
-$server=$Mysql->get_row("SELECT * FROM servers WHERE serverkey='".$_REQUEST["key"]."'");
+$server=$Mysql->get_row("SELECT * FROM servers WHERE serverkey='".$_POST["key"]."'");
 if($server!=false) {
     if($server['ip']!=$userIP) {
         $retjson["result"] = "failed";
@@ -29,7 +29,7 @@ if($server!=false) {
         exit(json_encode($retjson));
     }
     else {
-        $token=getToken($_REQUEST["key"]);
+        $token=getToken($_POST["key"]);
         if ($token==false) {
             $retjson["result"] = "failed";
             $retjson["reason"] = "Failed generating token";

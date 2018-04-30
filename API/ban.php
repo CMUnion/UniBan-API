@@ -9,32 +9,32 @@ $retjson =
 	"reason"	=>	""];
 $isFailed = false;
 
-if ($_REQUEST["token"]=="") {
+if ($_POST["token"]=="") {
 	$retjson["result"] = "failed";
 	$retjson["reason"] = "Incompleted argument:token";
 	$isFailed=true;
 }
-else if ($_REQUEST["uuid"]=="") {
+else if ($_POST["uuid"]=="") {
 	$retjson["result"] = "failed";
 	$retjson["reason"] = "Incompleted argument:uuid";
 	$isFailed=true;
 }
-else if ($_REQUEST["displayname"]=="") {
+else if ($_POST["displayname"]=="") {
 	$retjson["result"] = "failed";
 	$retjson["reason"] = "Incompleted argument:displayname";
 	$isFailed=true;
 }
-else if ($_REQUEST["level"]=="") {
+else if ($_POST["level"]=="") {
 	$retjson["result"] = "failed";
 	$retjson["reason"] = "Incompleted argument:level";
 	$isFailed=true;
 }
-else if ($_REQUEST["level"]>3 || $_REQUEST["level"]<1) {
+else if ($_POST["level"]>3 || $_POST["level"]<1) {
 	$retjson["result"] = "failed";
 	$retjson["reason"] = "Illegal argument:level (1~3)";
 	$isFailed=true;
 }
-else if ($_REQUEST["reason"]=="") {
+else if ($_POST["reason"]=="") {
 	$retjson["result"] = "failed";
 	$retjson["reason"] = "Incompleted argument:reason";
 	$isFailed=true;
@@ -46,10 +46,10 @@ checkInput(); //注入检测
 if ($isFailed) exit(json_encode($retjson));
 
 $userIP = $_SERVER['REMOTE_ADDR'];
-$server = $Mysql->get_row("SELECT * FROM servers WHERE token='".$_REQUEST['token']."'");
+$server = $Mysql->get_row("SELECT * FROM servers WHERE token='".$_POST['token']."'");
 if($server!=false) {
     $serverID=$server['serverid'];
-    if (isTokenLegal($_REQUEST['token'])) { //TODO: Token检查
+    if (isTokenLegal($_POST['token'])) { //TODO: Token检查
         $operatorID=$server['ownerid'];
         $invitecode=$Mysql->get_row("SELECT * FROM invitecode WHERE boundserverid='".$serverID."'");
         if($invitecode==false) {
@@ -63,7 +63,7 @@ if($server!=false) {
             exit(json_encode($retjson));
         }
         else {
-            $playerBannedResult = $Mysql->get_row("SELECT * FROM banned WHERE UUID='".$_REQUEST['uuid']."'");
+            $playerBannedResult = $Mysql->get_row("SELECT * FROM banned WHERE UUID='".$_POST['uuid']."'");
             if($playerBannedResult != false) {
                 if($playerBannedResult['fromserver'] != $serverID) {
                     $retjson["result"] = "failed";
@@ -71,7 +71,7 @@ if($server!=false) {
                     exit(json_encode($retjson));
                 }
                 else {
-                    $sql="UPDATE banned SET `reason` = '".$_REQUEST['reason']."',`level` = '".$_REQUEST['level']."',`latestname` = '".$_REQUEST['displayname']."' WHERE `UUID` = '".$_REQUEST["uuid"]."'";
+                    $sql="UPDATE banned SET `reason` = '".$_POST['reason']."',`level` = '".$_POST['level']."',`latestname` = '".$_POST['displayname']."' WHERE `UUID` = '".$_POST["uuid"]."'";
                     if($Mysql->query($sql)) {
                         $retjson["result"] = "OK";
                         $retjson["reason"] = "Banned player information updated";
@@ -86,7 +86,7 @@ if($server!=false) {
             }
             else {
                 $bannedID = $Mysql->count("SELECT COUNT(*) FROM banned")[0]+1;
-                $sql = "INSERT INTO `banned` (`bannedid`, `UUID`, `latestname`, `operatorid`, `fromserver`, `reason`, `level`, `screenshot`, `banneddate`, `vote`) VALUES ('".$bannedID."', '".$_REQUEST['uuid']."', '".$_REQUEST['displayname']."', '".$operatorID."', '".$serverID."', '".$_REQUEST['reason']."', '".$_REQUEST['level']."', 'null.jpg', '".time()."', '0')";
+                $sql = "INSERT INTO `banned` (`bannedid`, `UUID`, `latestname`, `operatorid`, `fromserver`, `reason`, `level`, `screenshot`, `banneddate`, `vote`) VALUES ('".$bannedID."', '".$_POST['uuid']."', '".$_POST['displayname']."', '".$operatorID."', '".$serverID."', '".$_POST['reason']."', '".$_POST['level']."', 'null.jpg', '".time()."', '0')";
                 if($Mysql->query($sql)) {
                     $retjson["result"] = "OK";
                     $retjson["reason"] = "Banned player information added. Please upload screenshot later.";

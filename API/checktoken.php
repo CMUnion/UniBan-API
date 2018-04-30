@@ -9,12 +9,12 @@ $retjson =
 	"reason"	=>	""];
 $isFailed = false;
 
-if ($_REQUEST["token"]=="") {
+if ($_POST["token"]=="") {
 	$retjson["result"] = "failed";
 	$retjson["reason"] = "Incompleted argument:token";
 	$isFailed=true;
 }
-if ($_REQUEST["serverid"]=="") {
+if ($_POST["serverid"]=="") {
 	$retjson["result"] = "failed";
 	$retjson["reason"] = "Incompleted argument:serverid";
 	$isFailed=true;
@@ -24,7 +24,7 @@ checkInput(); //注入检测
 
 if($isFailed) exit(json_encode($retjson));
 
-if(isTokenLegal($_REQUEST["token"])) {
+if(isTokenLegal($_POST["token"])) {
     $retjson['result'] = "OK";
 }
 exit(json_encode($retjson));

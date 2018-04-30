@@ -9,12 +9,12 @@ $retjson =
 	"reason"	=>	""];
 $isFailed = false;
 
-if ($_REQUEST["token"]=="") {
+if ($_POST["token"]=="") {
 	$retjson["result"] = "failed";
 	$retjson["reason"] = "Incompleted argument:token";
 	$isFailed=true;
 }
-else if ($_REQUEST["uuid"]=="") {
+else if ($_POST["uuid"]=="") {
 	$retjson["result"] = "failed";
 	$retjson["reason"] = "Incompleted argument:uuid";
 	$isFailed=true;
@@ -26,10 +26,10 @@ if ($isFailed) exit(json_encode($retjson));
 
 
 $userIP = $_SERVER['REMOTE_ADDR'];
-$server = $Mysql->get_row("SELECT * FROM servers WHERE token='".$_REQUEST['token']."'");
+$server = $Mysql->get_row("SELECT * FROM servers WHERE token='".$_POST['token']."'");
 if($server!=false) {
     $serverID=$server['serverid'];
-    if (isTokenLegal($_REQUEST['token'])) { //TODO: Token检查
+    if (isTokenLegal($_POST['token'])) { //TODO: Token检查
         $operatorID=$server['ownerid'];
         $invitecode=$Mysql->get_row("SELECT * FROM invitecode WHERE boundserverid='".$serverID."'");
         if($invitecode==false) {
@@ -43,7 +43,7 @@ if($server!=false) {
             exit(json_encode($retjson));
         }
         else {
-            $playerBannedResult = $Mysql->get_row("SELECT * FROM banned WHERE UUID='".$_REQUEST['uuid']."'");
+            $playerBannedResult = $Mysql->get_row("SELECT * FROM banned WHERE UUID='".$_POST['uuid']."'");
             if($playerBannedResult != false) {
                 if($playerBannedResult['fromserver'] != $serverID) {
                     $retjson["result"] = "failed";
@@ -51,7 +51,7 @@ if($server!=false) {
                     exit(json_encode($retjson));
                 }
                 else {
-                    $sql="UPDATE banned SET `level` = '0' WHERE `UUID` = '".$_REQUEST["uuid"]."'";
+                    $sql="UPDATE banned SET `level` = '0' WHERE `UUID` = '".$_POST["uuid"]."'";
                     if($Mysql->query($sql)) {
                         $retjson["result"] = "OK";
                         $retjson["reason"] = "Unbanned";

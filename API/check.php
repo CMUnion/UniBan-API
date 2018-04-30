@@ -13,17 +13,17 @@ $retjson =
 ];
 $isFailed = false;
 
-if ($_REQUEST["key"]=="") {
+if ($_POST["key"]=="") {
 	$retjson["result"] = "failed";
 	$retjson["reason"] = "Incompleted argument:key";
 	$isFailed=true;
 }
-else if ($_REQUEST["uuid"]=="") {
+else if ($_POST["uuid"]=="") {
 	$retjson["result"] = "failed";
 	$retjson["reason"] = "Incompleted argument:uuid";
 	$isFailed=true;
 }
-else if ($_REQUEST["displayname"]=="") {
+else if ($_POST["displayname"]=="") {
 	$retjson["result"] = "failed";
 	$retjson["reason"] = "Incompleted argument:displayname";
 	$isFailed=true;
@@ -36,7 +36,7 @@ checkInput(); //注入检测
 
 $userIP = $_SERVER['REMOTE_ADDR'];
 if(1==1) {
-    $😂=$Mysql->get_row("SELECT * FROM banned WHERE UUID='".$_REQUEST["uuid"]."'");
+    $😂=$Mysql->get_row("SELECT * FROM banned WHERE UUID='".$_POST["uuid"]."'");
     $💻=$Mysql->get_row("SELECT name FROM servers WHERE serverid='".$😂['fromserver']."'");
     
     if($😂!=false) {
