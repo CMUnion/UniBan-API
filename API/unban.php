@@ -1,5 +1,5 @@
 <?php
-// UniBan 封禁上报API
+// UniBan 解除封禁API
 // Copyright (C) EucalyptusLeaves 2018
 if(!defined("UBSecurity")) exit("Access denied.");
 
@@ -18,27 +18,6 @@ else if ($_REQUEST["uuid"]=="") {
 	$retjson["reason"] = "Incompleted argument:uuid";
 	$isFailed=true;
 }
-else if ($_REQUEST["displayname"]=="") {
-	$retjson["result"] = "failed";
-	$retjson["reason"] = "Incompleted argument:displayname";
-	$isFailed=true;
-}
-else if ($_REQUEST["level"]=="") {
-	$retjson["result"] = "failed";
-	$retjson["reason"] = "Incompleted argument:level";
-	$isFailed=true;
-}
-else if ($_REQUEST["level"]>3 || $_REQUEST["level"]<1) {
-	$retjson["result"] = "failed";
-	$retjson["reason"] = "Illegal argument:level (1~3)";
-	$isFailed=true;
-}
-else if ($_REQUEST["reason"]=="") {
-	$retjson["result"] = "failed";
-	$retjson["reason"] = "Incompleted argument:reason";
-	$isFailed=true;
-}
-
 
 checkInput(); //注入检测
 
@@ -66,36 +45,27 @@ if (1==1) { //TODO: Token检查
             if($playerBannedResult != false) {
                 if($playerBannedResult['fromserver'] != $serverID) {
                     $retjson["result"] = "failed";
-                    $retjson["reason"] = "The player has already banned by other server.";
+                    $retjson["reason"] = "The player was banned by other server.";
                     exit(json_encode($retjson));
                 }
                 else {
-                    $sql="UPDATE banned SET `reason` = '".$_REQUEST['reason']."',`level` = '".$_REQUEST['level']."',`latestname` = '".$_REQUEST['displayname']."' WHERE `UUID` = '".$_REQUEST["uuid"]."'";
+                    $sql="UPDATE banned SET `level` = '0' WHERE `UUID` = '".$_REQUEST["uuid"]."'";
                     if($Mysql->query($sql)) {
                         $retjson["result"] = "OK";
-                        $retjson["reason"] = "Banned player information updated";
+                        $retjson["reason"] = "Unbanned";
                         exit(json_encode($retjson));
                     }
                     else {
                         $retjson["result"] = "failed";
-                        $retjson["reason"] = "Failed updating banned player information, Try again later";
+                        $retjson["reason"] = "Failed updating unbanning information, Try again later";
                         exit(json_encode($retjson));
                     }
                 }
             }
             else {
-                $bannedID = $Mysql->count("SELECT COUNT(*) FROM banned")[0]+1;
-                $sql = "INSERT INTO `banned` (`bannedid`, `UUID`, `latestname`, `operatorid`, `fromserver`, `reason`, `level`, `screenshot`, `banneddate`, `vote`) VALUES ('".$bannedID."', '".$_REQUEST['uuid']."', '".$_REQUEST['displayname']."', '".$operatorID."', '".$serverID."', '".$_REQUEST['reason']."', '".$_REQUEST['level']."', 'null.jpg', '".time()."', '0')";
-                if($Mysql->query($sql)) {
-                    $retjson["result"] = "OK";
-                    $retjson["reason"] = "Banned player information added. Please upload screenshot later.";
-                    exit(json_encode($retjson));
-                }
-                else {
-                    $retjson["result"] = "failed";
-                    $retjson["reason"] = "Failed updating banned player information, Try again later ($bannedID)";
-                    exit(json_encode($retjson));
-                }
+                $retjson["result"] = "failed";
+                $retjson["reason"] = "The player is not banned";
+                exit(json_encode($retjson));
             }
         }
 	}

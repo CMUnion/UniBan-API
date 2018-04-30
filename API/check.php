@@ -39,11 +39,17 @@ if(1==1) {
     $💻=$Mysql->get_row("SELECT name FROM servers WHERE serverid='".$😂['fromserver']."'");
     
     if($😂!=false) {
-        $retjson['result'] = "OK";
-        $retjson['banned'] = "true";
-        $retjson['reason'] = $😂['reason'];
-        $retjson['fromServer'] = $💻['name'];
-        $retjson['level'] = $😂['level'];
+        if($retjson['level']==0) {
+            $retjson['result'] = "OK";
+            $retjson['banned'] = "false";
+        }
+        else {
+            $retjson['result'] = "OK";
+            $retjson['banned'] = "true";
+            $retjson['reason'] = $😂['reason'];
+            $retjson['fromServer'] = $💻['name'];
+            $retjson['level'] = $😂['level'];
+        }
     }
     else {
         $retjson['result'] = "OK";
