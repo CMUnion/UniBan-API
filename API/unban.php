@@ -25,7 +25,7 @@ checkInput(); //注入检测
 if ($isFailed) exit(json_encode($retjson));
 
 
-if (1==1) { //TODO: Token检查
+if (isTokenLegal($_REQUEST['token'])) { //TODO: Token检查
 	$userIP = $_SERVER['REMOTE_ADDR'];
 	if($Mysql->get_row("SELECT * FROM servers WHERE serverkey='".$_REQUEST["key"]."'")!=false) {
         $serverID=$Mysql->get_row("SELECT serverid FROM servers WHERE serverkey='".$_REQUEST["key"]."'")['serverid'];
