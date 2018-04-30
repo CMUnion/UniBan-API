@@ -18,18 +18,8 @@ else if ($_REQUEST["invitecode"]=="") {
 	$retjson["reason"] = "Incompleted argument:invitecode";
 	$isFailed=true;
 }
-else if ($_REQUEST["key"]!=addslashes($_REQUEST["key"]) || $_REQUEST["invitecode"]!=addslashes($_REQUEST["invitecode"])) {
-	$retjson["result"] = "failed";
-	$retjson["reason"] = "Invalid argument";
-	$isFailed=true;
-}
-/*
-else if (!preg_match("/^(([a-z]+[0-9]+)|([0-9]+[a-z]+))[a-z0-9]*$/i",$_REQUEST["invitecode"])) {
-	$retjson["result"] = "error";
-	$retjson["reason"] = "Invalid invitecode";
-	$retjson["extrainfo"] = "";
-	$isFailed=true;
-}*/
+
+checkInput(); //注入检测
 
 if ($isFailed) exit(json_encode($retjson));
 
