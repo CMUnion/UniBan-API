@@ -3,6 +3,6 @@
 // ✝️ God bless us.
 // Copyright (C) EucalyptusLeaves 2018
 echo "<h2>Welcome</h2><br>UniBan API";
-checkInput();
+//checkInput();
 
 ?>
