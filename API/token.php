@@ -22,16 +22,15 @@ if ($isFailed) exit(json_encode($retjson));
 
 
 $userIP = $_SERVER['REMOTE_ADDR'];
-if($Mysql->get_row("SELECT * FROM servers WHERE serverkey='".$_REQUEST["key"]."'")!=false) {
-    $server=$Mysql->get_row("SELECT serverid FROM servers WHERE serverkey='".$_REQUEST["key"]."'");
-
+$server=$Mysql->get_row("SELECT * FROM servers WHERE serverkey='".$_REQUEST["key"]."'");
+if($server!=false) {
     if($server['ip']!=$userIP) {
         $retjson["result"] = "failed";
         $retjson["reason"] = "Server IP not matched";
         exit(json_encode($retjson));
     }
     else {
-        $token=getToken();
+        $token=getToken($_REQUEST['key'],$server['serverid']);
         if ($token!=false) {
             $retjson["result"] = "failed";
             $retjson["reason"] = "Failed generating token";
