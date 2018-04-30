@@ -34,20 +34,23 @@ else if (!preg_match("/^(([a-z]+[0-9]+)|([0-9]+[a-z]+))[a-z0-9]*$/i",$_REQUEST["
 if ($isFailed) exit(json_encode($retjson));
 
 
-if ($Mysql->count("SELECT * FROM invitecode WHERE code='".$_REQUEST["invitecode"]."'")==1) {
+if ($Mysql->get_row("SELECT * FROM invitecode WHERE code='".$_REQUEST["invitecode"]."'")!=false) {
 	$userIP = $_SERVER['REMOTE_ADDR'];
-	if($Mysql->count("SELECT * FROM servers WHERE serverkey='".$_REQUEST["key"]."'")==1) {
-        $invitecodecount=(int)$Mysql->query("SELECT `count` FROM `invitecode` WHERE `code`='".$_REQUEST["invitecode"]."'");
-        if($invitecodecount>1) {
+	if($Mysql->get_row("SELECT * FROM servers WHERE serverkey='".$_REQUEST["key"]."'")!=false) {
+        $serverID=$Mysql->get_row("SELECT serverid FROM servers WHERE serverkey='".$_REQUEST["key"]."'")['serverid'];
+        $invitecodecount=$Mysql->get_row("SELECT count FROM invitecode WHERE code='".$_REQUEST["invitecode"]."'")['count'];
+        $boundSID=$Mysql->get_row("SELECT boundserverid FROM invitecode WHERE code='".$_REQUEST["invitecode"]."'")['boundserverid'];
+        if($invitecodecount>=1 && $boundSID != $serverID) {
                 $retjson["result"] = "failed";
-                $retjson["reason"] = "Invitecode not available";
+                $retjson["reason"] = "Invitecode not available (Count:".$invitecodecount.")";
                 exit(json_encode($retjson));
         }
         else {
             $sql = "UPDATE servers SET ip = '".$userIP."' WHERE serverkey='".$_REQUEST["key"]."'";
             if($Mysql->query($sql)) {
-                $invitecodecount++;
-                $Mysql->query("UPDATE invitecode SET `count` = '".(String)$invitecodecount."' WHERE `code` = '".$_REQUEST["invitecode"]."'");
+                if($boundSID!=$serverID) $invitecodecount++;
+                $Mysql->query("UPDATE invitecode SET `count` = '".$invitecodecount."' WHERE `code` = '".$_REQUEST["invitecode"]."'");
+                $Mysql->query("UPDATE invitecode SET `boundserverid` = '".$serverID."' WHERE `code` = '".$_REQUEST["invitecode"]."'");
                 $retjson["result"] = "OK";
                 $retjson["reason"] = "Server information updated";
                 exit(json_encode($retjson));
