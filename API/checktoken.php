@@ -24,7 +24,7 @@ checkInput(); //注入检测
 
 if($isFailed) exit(json_encode($retjson));
 
-if(isTokenLegal($_REQUEST["token"],$_REQUEST["serverid"])) {
+if(isTokenLegal($_REQUEST["token"])) {
     $retjson['result'] = "OK";
 }
 exit(json_encode($retjson));

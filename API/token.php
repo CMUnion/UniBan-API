@@ -29,7 +29,7 @@ if($server!=false) {
         exit(json_encode($retjson));
     }
     else {
-        $token=getToken($server['serverid']);
+        $token=getToken($_REQUEST["key"]);
         if ($token==false) {
             $retjson["result"] = "failed";
             $retjson["reason"] = "Failed generating token";

@@ -9,9 +9,9 @@ $retjson =
 	"reason"	=>	""];
 $isFailed = false;
 
-if ($_REQUEST["key"]=="") {
+if ($_REQUEST["token"]=="") {
 	$retjson["result"] = "failed";
-	$retjson["reason"] = "Incompleted argument:key";
+	$retjson["reason"] = "Incompleted argument:token";
 	$isFailed=true;
 }
 else if ($_REQUEST["uuid"]=="") {
@@ -25,11 +25,12 @@ checkInput(); //注入检测
 if ($isFailed) exit(json_encode($retjson));
 
 
-if (isTokenLegal($_REQUEST['token'])) { //TODO: Token检查
-	$userIP = $_SERVER['REMOTE_ADDR'];
-	if($Mysql->get_row("SELECT * FROM servers WHERE serverkey='".$_REQUEST["key"]."'")!=false) {
-        $serverID=$Mysql->get_row("SELECT serverid FROM servers WHERE serverkey='".$_REQUEST["key"]."'")['serverid'];
-        $operatorID=$Mysql->get_row("SELECT ownerid FROM servers WHERE serverkey='".$_REQUEST["key"]."'")['ownerid'];
+$userIP = $_SERVER['REMOTE_ADDR'];
+$server = $Mysql->get_row("SELECT * FROM servers WHERE token='".$_REQUEST['token']."'");
+if($server!=false) {
+    $serverID=$server['serverid'];
+    if (isTokenLegal($_REQUEST['token'])) { //TODO: Token检查
+        $operatorID=$server['ownerid'];
         $invitecode=$Mysql->get_row("SELECT * FROM invitecode WHERE boundserverid='".$serverID."'");
         if($invitecode==false) {
             $retjson["result"] = "failed";
@@ -69,13 +70,12 @@ if (isTokenLegal($_REQUEST['token'])) { //TODO: Token检查
                 exit(json_encode($retjson));
             }
         }
-	}
-	else {
-		$retjson["result"] = "failed";
-		$retjson["reason"] = "Server not registered or key not correct";
-		exit(json_encode($retjson));
-	}
-	
+    }
+    else {
+        $retjson["result"] = "failed";
+        $retjson["reason"] = "Server not registered or token not correct";
+        exit(json_encode($retjson));
+   }
 }
 else {
     $retjson["result"] = "failed";
