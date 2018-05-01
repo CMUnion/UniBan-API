@@ -13,56 +13,36 @@ $retjson =
 ];
 $isFailed = false;
 
-if ($_POST["key"]=="") {
-	$retjson["result"] = "failed";
-	$retjson["reason"] = "Incompleted argument:key";
-	$isFailed=true;
-}
-else if ($_POST["uuid"]=="") {
+if ($_POST["uuid"]=="") {
 	$retjson["result"] = "failed";
 	$retjson["reason"] = "Incompleted argument:uuid";
-	$isFailed=true;
-}
-else if ($_POST["displayname"]=="") {
-	$retjson["result"] = "failed";
-	$retjson["reason"] = "Incompleted argument:displayname";
 	$isFailed=true;
 }
 
 if ($isFailed) exit(json_encode($retjson));
 
-checkInput(); //注入检测
+checkInput(); //注入检测 
 
+$player=$Mysql->get_row("SELECT * FROM `banned` WHERE UUID='".$_POST["uuid"]."'");
 
-$userIP = $_SERVER['REMOTE_ADDR'];
-if(1==1) {
-    $😂=$Mysql->get_row("SELECT * FROM banned WHERE UUID='".$_POST["uuid"]."'");
-    $💻=$Mysql->get_row("SELECT name FROM servers WHERE serverid='".$😂['fromserver']."'");
-    
-    if($😂!=false) {
-        if($retjson['level']==0) {
-            $retjson['result'] = "OK";
-            $retjson['banned'] = "false";
-        }
-        else {
-            $retjson['result'] = "OK";
-            $retjson['banned'] = "true";
-            $retjson['reason'] = $😂['reason'];
-            $retjson['fromServer'] = $💻['name'];
-            $retjson['level'] = $😂['level'];
-        }
-    }
-    else {
+if($player!=false) {
+    if($player['level']==0) {
         $retjson['result'] = "OK";
         $retjson['banned'] = "false";
     }
-    exit(json_encode($retjson));
+    else {
+        $server=$Mysql->get_row("SELECT * FROM servers WHERE serverid='".$player['fromserver']."'");
+        $retjson['result'] = "OK";
+        $retjson['banned'] = "true";
+        $retjson['reason'] = $player['reason'];
+        $retjson['fromServer'] = $server['name'];
+        $retjson['level'] = $player['level'];
+    }
 }
 else {
-    $retjson["result"] = "failed";
-    $retjson["reason"] = "Invalid session";
-    exit(json_encode($retjson));
+    $retjson['result'] = "OK";
+    $retjson['banned'] = "false";
 }
-
+exit(json_encode($retjson));
 
 ?>
