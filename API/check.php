@@ -21,7 +21,7 @@ if ($_POST["uuid"]=="") {
 
 if ($isFailed) exit(json_encode($retjson));
 
-checkInput(); //注入检测
+checkInput(); //注入检测 
 
 $player=$Mysql->get_row("SELECT * FROM `banned` WHERE UUID='".$_POST["uuid"]."'");
 
