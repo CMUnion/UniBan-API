@@ -51,23 +51,32 @@ if ($Mysql->get_row("SELECT * FROM invitecode WHERE code='".$_POST["invitecode"]
                 'Survival', 'Faction', 'Mini-Game', 'RP', 'Creative', 'Other'
             ];
             if (!in_array($category,$supportedCategory)) {
-                $categor='Other';
+                $category='Other';
             }
             
-            // 检查服务器分类
-            $locate=$_POST['locate'];
+            // 检查服务器语言偏好
+            $locale=$_POST['locate'];
             $supportedLocate=[
                 'zh_CN', 'en_US'
             ];
-            if (!in_array($locate,$supportedLocate)) {
-                $categor='en_US';
+            if (!in_array($locale,$supportedLocate)) {
+                $locale='en_US';
             }
             
-            $sql = "UPDATE servers SET ip='".$userIP."',name='".$_POST['name']."',software='".$software."',version='".$version."',category='".$category."',locate='".$locate."' WHERE serverkey='".$_POST["key"]."'";
+            $sql = "UPDATE servers SET 
+            `ip`='".$userIP."',
+            `name`='".$_POST['name']."',
+            `software`='".$software."',
+            `version`='".$version."',
+            `category`='".$category."',
+            `locale`='".$locale."'
+            WHERE serverkey='".$_POST["key"]."'";
+            /*
+            */
             if($Mysql->query($sql)) {
                 if($boundSID!=$serverID) $invitecodecount++;
-                $Mysql->query("UPDATE invitecode SET count=".$invitecodecount."' WHERE `code` = '".$_POST["invitecode"]."'");
-                $Mysql->query("UPDATE invitecode SET boundserverid='".$serverID."' WHERE `code` = '".$_POST["invitecode"]."'");
+                $Mysql->query("UPDATE invitecode SET `count`='".$invitecodecount."' WHERE `code` = '".$_POST["invitecode"]."'");
+                $Mysql->query("UPDATE invitecode SET `boundserverid`='".$serverID."' WHERE `code` = '".$_POST["invitecode"]."'");
                 $retjson["result"] = "OK";
                 $retjson["reason"] = "Server information updated";
                 exit(json_encode($retjson));
