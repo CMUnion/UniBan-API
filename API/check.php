@@ -18,11 +18,6 @@ if ($_POST["uuid"]=="") {
 	$retjson["reason"] = "Incompleted argument:uuid";
 	$isFailed=true;
 }
-else if ($_POST["displayname"]=="") {
-	$retjson["result"] = "failed";
-	$retjson["reason"] = "Incompleted argument:displayname";
-	$isFailed=true;
-}
 
 if ($isFailed) exit(json_encode($retjson));
 
