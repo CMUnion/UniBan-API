@@ -9,21 +9,11 @@ $retjson =
 	"reason"	=>	""];
 $isFailed = false;
 
-if ($_POST["key"]=="") {
-	$retjson["result"] = "failed";
-	$retjson["reason"] = "Incompleted argument:key";
-	$isFailed=true;
-}
-else if ($_POST["invitecode"]=="") {
-	$retjson["result"] = "failed";
-	$retjson["reason"] = "Incompleted argument:invitecode";
-	$isFailed=true;
-}
+isAllPostVarSet(["key","invitecode","name","software","version","category","locale"]);
 
 checkInput(); //注入检测
 
 if ($isFailed) exit(json_encode($retjson));
-
 
 if ($Mysql->get_row("SELECT * FROM invitecode WHERE code='".$_POST["invitecode"]."'")!=false) {
 	$userIP = $_SERVER['REMOTE_ADDR'];
@@ -37,11 +27,47 @@ if ($Mysql->get_row("SELECT * FROM invitecode WHERE code='".$_POST["invitecode"]
                 exit(json_encode($retjson));
         }
         else {
-            $sql = "UPDATE servers SET ip = '".$userIP."' WHERE serverkey='".$_POST["key"]."'";
+            if(strlen($_POST['name'])>20) {
+                $retjson["result"] = "failed";
+                $retjson["reason"] = "Server name too long (>20)";
+                exit(json_encode($retjson));
+            }
+            
+            // 检查服务器软件类型
+            $software=$_POST['software'];
+            $supportedSoftwareName=[
+                'Bukkit','Spigot','PaperSpigot','BungeeCord','Other'
+            ];
+            if (!in_array($software,$supportedSoftwareName)) {
+                $software='Other';
+            }
+            
+            //TODO: 检查服务器版本
+            $version=$_POST['version'];
+            
+            // 检查服务器分类
+            $category=$_POST['category'];
+            $supportedCategory=[
+                'Survival', 'Faction', 'Mini-Game', 'RP', 'Creative', 'Other'
+            ];
+            if (!in_array($category,$supportedCategory)) {
+                $categor='Other';
+            }
+            
+            // 检查服务器分类
+            $locate=$_POST['locate'];
+            $supportedLocate=[
+                'zh_CN', 'en_US'
+            ];
+            if (!in_array($locate,$supportedLocate)) {
+                $categor='en_US';
+            }
+            
+            $sql = "UPDATE servers SET ip='".$userIP."',name='".$_POST['name']."',software='".$software."',version='".$version."',category='".$category."',locate='".$locate."' WHERE serverkey='".$_POST["key"]."'";
             if($Mysql->query($sql)) {
                 if($boundSID!=$serverID) $invitecodecount++;
-                $Mysql->query("UPDATE invitecode SET `count` = '".$invitecodecount."' WHERE `code` = '".$_POST["invitecode"]."'");
-                $Mysql->query("UPDATE invitecode SET `boundserverid` = '".$serverID."' WHERE `code` = '".$_POST["invitecode"]."'");
+                $Mysql->query("UPDATE invitecode SET count=".$invitecodecount."' WHERE `code` = '".$_POST["invitecode"]."'");
+                $Mysql->query("UPDATE invitecode SET boundserverid='".$serverID."' WHERE `code` = '".$_POST["invitecode"]."'");
                 $retjson["result"] = "OK";
                 $retjson["reason"] = "Server information updated";
                 exit(json_encode($retjson));

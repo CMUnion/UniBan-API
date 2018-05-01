@@ -10,11 +10,13 @@ $retjson =
 	"token"	=>	""];
 $isFailed = false;
 
-if ($_POST["key"]=="") {
+isAllPostVarSet(["key"]);
+
+/*if ($_POST["key"]=="") {
 	$retjson["result"] = "failed";
 	$retjson["reason"] = "Incompleted argument:key";
 	$isFailed=true;
-}
+}*/
 
 checkInput(); //注入检测
 
