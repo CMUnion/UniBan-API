@@ -13,11 +13,6 @@ $retjson =
 ];
 $isFailed = false;
 
-if ($_POST["key"]=="") {
-	$retjson["result"] = "failed";
-	$retjson["reason"] = "Incompleted argument:key";
-	$isFailed=true;
-}
 else if ($_POST["uuid"]=="") {
 	$retjson["result"] = "failed";
 	$retjson["reason"] = "Incompleted argument:uuid";
