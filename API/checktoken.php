@@ -16,4 +16,5 @@ if(isTokenLegal($_POST["token"])) {
     $retjson['result'] = "OK";
 }
 exit(json_encode($retjson));
+
 ?>
