@@ -4,16 +4,14 @@
 // Copyright (C) EucalyptusLeaves 2018
 if(!defined("UBSecurity")) exit("Access denied.");
 
-$retjson = 
+$retjson =
 [	"result"	=>	"failed",
 	"reason"	=>	""];
-$isFailed = false;
 
 isAllPostVarSet(["key","invitecode","name","software","version","category","locale"]);
 
 checkInput(); //注入检测
 
-if ($isFailed) exit(json_encode($retjson));
 
 if ($Mysql->get_row("SELECT * FROM invitecode WHERE code='".$_POST["invitecode"]."'")!=false) {
 	$userIP = $_SERVER['REMOTE_ADDR'];
@@ -32,7 +30,7 @@ if ($Mysql->get_row("SELECT * FROM invitecode WHERE code='".$_POST["invitecode"]
                 $retjson["reason"] = "Server name too long (>20)";
                 exit(json_encode($retjson));
             }
-            
+
             // 检查服务器软件类型
             $software=$_POST['software'];
             $supportedSoftwareName=[
@@ -41,10 +39,10 @@ if ($Mysql->get_row("SELECT * FROM invitecode WHERE code='".$_POST["invitecode"]
             if (!in_array($software,$supportedSoftwareName)) {
                 $software='Other';
             }
-            
+
             //TODO: 检查服务器版本
             $version=$_POST['version'];
-            
+
             // 检查服务器分类
             $category=$_POST['category'];
             $supportedCategory=[
@@ -53,7 +51,7 @@ if ($Mysql->get_row("SELECT * FROM invitecode WHERE code='".$_POST["invitecode"]
             if (!in_array($category,$supportedCategory)) {
                 $category='Other';
             }
-            
+
             // 检查服务器语言偏好
             $locale=$_POST['locate'];
             $supportedLocate=[
@@ -62,8 +60,8 @@ if ($Mysql->get_row("SELECT * FROM invitecode WHERE code='".$_POST["invitecode"]
             if (!in_array($locale,$supportedLocate)) {
                 $locale='en_US';
             }
-            
-            $sql = "UPDATE servers SET 
+
+            $sql = "UPDATE servers SET
             `ip`='".$userIP."',
             `name`='".$_POST['name']."',
             `software`='".$software."',
@@ -93,7 +91,7 @@ if ($Mysql->get_row("SELECT * FROM invitecode WHERE code='".$_POST["invitecode"]
 		$retjson["reason"] = "Server not registered or key not correct";
 		exit(json_encode($retjson));
 	}
-	
+
 }
 else {
 	$retjson["result"] = "failed";

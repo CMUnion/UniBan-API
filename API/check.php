@@ -4,24 +4,18 @@
 // Copyright (C) EucalyptusLeaves 2018
 if(!defined("UBSecurity")) exit("Access denied.");
 
-$retjson = 
+$retjson =
 [	"result"	=>	"failed",
 	"banned"	=>	"false",
 	"reason"	=>	"",
 	"level"    	=>	"0",
 	"fromServer"	=>	""
 ];
-$isFailed = false;
 
-if ($_POST["uuid"]=="") {
-	$retjson["result"] = "failed";
-	$retjson["reason"] = "Incompleted argument:uuid";
-	$isFailed=true;
-}
+checkInput(); //注入检测
 
-if ($isFailed) exit(json_encode($retjson));
+isAllPostVarSet["uuid"];
 
-checkInput(); //注入检测 
 
 $player=$Mysql->get_row("SELECT * FROM `banned` WHERE UUID='".$_POST["uuid"]."'");
 

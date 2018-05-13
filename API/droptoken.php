@@ -4,21 +4,14 @@
 // Copyright (C) EucalyptusLeaves 2018
 if(!defined("UBSecurity")) exit("Access denied.");
 
-$retjson = 
+$retjson =
 [	"result"	=>	"failed",
 	"reason"	=>	""
 ];
-$isFailed = false;
-
-if ($_POST["token"]=="") {
-	$retjson["result"] = "failed";
-	$retjson["reason"] = "Incompleted argument:token";
-	$isFailed=true;
-}
 
 checkInput(); //注入检测
 
-if($isFailed) exit(json_encode($retjson));
+isAllPostVarSet(["token"]);
 
 $userIP = $_SERVER['REMOTE_ADDR'];
 $server=$Mysql->get_row("SELECT * FROM servers WHERE token='".$_POST["token"]."'");
@@ -39,7 +32,7 @@ if($server!=false) {
         }
         exit(json_encode($retjson));
     }
-    
+
 }
 else {
 	$retjson["result"] = "failed";

@@ -4,25 +4,13 @@
 // Copyright (C) EucalyptusLeaves 2018
 if(!defined("UBSecurity")) exit("Access denied.");
 
-$retjson = 
+$retjson =
 [	"result"	=>	"failed",
 	"reason"	=>	""];
-$isFailed = false;
 
-if ($_POST["token"]=="") {
-	$retjson["result"] = "failed";
-	$retjson["reason"] = "Incompleted argument:token";
-	$isFailed=true;
-}
-if ($_POST["serverid"]=="") {
-	$retjson["result"] = "failed";
-	$retjson["reason"] = "Incompleted argument:serverid";
-	$isFailed=true;
-}
+isAllPostVarSet(["token","serverid"]);
 
 checkInput(); //注入检测
-
-if($isFailed) exit(json_encode($retjson));
 
 if(isTokenLegal($_POST["token"])) {
     $retjson['result'] = "OK";
