@@ -10,8 +10,6 @@ $retjson =
 
 isAllPostVarSet(["token","serverid"]);
 
-checkInput(); //注入检测
-
 if(isTokenLegal($_POST["token"])) {
     $retjson['result'] = "OK";
 }

@@ -9,8 +9,6 @@ $retjson =
 	"reason"	=>	""
 ];
 
-checkInput(); //注入检测
-
 isAllPostVarSet(["token"]);
 
 $userIP = $_SERVER['REMOTE_ADDR'];
@@ -22,7 +20,7 @@ if($server!=false) {
         exit(json_encode($retjson));
     }
     else {
-        $token=getToken($server['serverkey']);
+        $token=getToken($server['serverkey'],true);
         if ($token==false) {
             $retjson["result"] = "failed";
             $retjson["reason"] = "Failed droping token";

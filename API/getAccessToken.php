@@ -11,14 +11,6 @@ $retjson =
 
 isAllPostVarSet(["key"]);
 
-/*if ($_POST["key"]=="") {
-	$retjson["result"] = "failed";
-	$retjson["reason"] = "Incompleted argument:key";
-	$isFailed=true;
-}*/
-
-checkInput(); //注入检测
-
 
 $userIP = $_SERVER['REMOTE_ADDR'];
 $server=$Mysql->get_row("SELECT * FROM servers WHERE serverkey='".$_POST["key"]."'");

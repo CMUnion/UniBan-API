@@ -10,8 +10,6 @@ $retjson =
 
 isAllPostVarSet(["key","invitecode","name","software","version","category","locale"]);
 
-checkInput(); //注入检测
-
 
 if ($Mysql->get_row("SELECT * FROM invitecode WHERE code='".$_POST["invitecode"]."'")!=false) {
 	$userIP = $_SERVER['REMOTE_ADDR'];

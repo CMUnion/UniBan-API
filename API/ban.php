@@ -10,8 +10,6 @@ $retjson =
 
 isAllPostVarSet(["token","uuid","displayname","level","reason"]);
 
-checkInput(); //注入检测
-
 if ($_POST["level"]>3 || $_POST["level"]<1) {
 	$retjson["result"] = "failed";
 	$retjson["reason"] = "Illegal argument:level (1~3)";

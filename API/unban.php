@@ -10,8 +10,6 @@ $retjson =
 
 isAllPostVarSet(["token","uuid"]);
 
-checkInput(); //注入检测
-
 $userIP = $_SERVER['REMOTE_ADDR'];
 $server = $Mysql->get_row("SELECT * FROM servers WHERE token='".$_POST['token']."'");
 if($server!=false) {
